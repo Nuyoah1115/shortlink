@@ -10,7 +10,7 @@ import lombok.Data;
  * @Description: 用户返回参数响应
  **/
 @Data
-public class UserRespDto {
+public class UserActualRespDto {
     /**
      * id
      */
@@ -29,7 +29,6 @@ public class UserRespDto {
     /**
      * 手机号
      */
-    @JsonSerialize(using = PhoneDesensitizationSerializer.class)
     private String phone;
 
     /**
