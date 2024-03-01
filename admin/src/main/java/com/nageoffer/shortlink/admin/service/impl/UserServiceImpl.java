@@ -13,8 +13,12 @@ import com.nageoffer.shortlink.admin.dto.resp.UserRespDto;
 import com.nageoffer.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
+import static com.nageoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
+import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME_EXIST;
 import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_FAIL;
 
 /**
@@ -27,6 +31,8 @@ import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements UserService {
 
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
+
+    private final RedissonClient redissonClient;
 
     @Override
     public UserRespDto getUserByUsername(String username) {
@@ -48,12 +54,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
     @Override
     public void register(UserRegisterReqDTO registerReqDTO) {
         if (hasUsername(registerReqDTO.getUsername())) {
-            throw new ClientException(UserErrorCodeEnum.USER_NAME_EXIST);
+            throw new ClientException(USER_NAME_EXIST);
         }
-        int insert = baseMapper.insert(BeanUtil.toBean(registerReqDTO, UserDo.class));
-        if (insert < 1) {
-            throw new ClientException(USER_SAVE_FAIL);
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + registerReqDTO.getUsername());
+        try {
+            if (lock.tryLock()) {
+                int insert = baseMapper.insert(BeanUtil.toBean(registerReqDTO, UserDo.class));
+                if (insert < 1) {
+                    throw new ClientException(USER_SAVE_FAIL);
+                }
+                userRegisterCachePenetrationBloomFilter.add(registerReqDTO.getUsername());
+                return;
+            }else {
+                throw new ClientException(USER_NAME_EXIST);
+            }
+        } finally {
+            lock.unlock();
         }
-        userRegisterCachePenetrationBloomFilter.add(registerReqDTO.getUsername());
     }
 }
