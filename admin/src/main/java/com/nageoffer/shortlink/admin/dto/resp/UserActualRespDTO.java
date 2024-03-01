@@ -1,7 +1,5 @@
 package com.nageoffer.shortlink.admin.dto.resp;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nageoffer.shortlink.admin.common.serialize.PhoneDesensitizationSerializer;
 import lombok.Data;
 
 /**
@@ -10,7 +8,7 @@ import lombok.Data;
  * @Description: 用户返回参数响应
  **/
 @Data
-public class UserActualRespDto {
+public class UserActualRespDTO {
     /**
      * id
      */
