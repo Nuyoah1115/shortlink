@@ -1,25 +1,34 @@
 package com.nageoffer.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nageoffer.shortlink.admin.common.convention.exception.ClientException;
-import com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum;
 import com.nageoffer.shortlink.admin.dao.entity.UserDo;
 import com.nageoffer.shortlink.admin.dao.mapper.UserMapper;
+import com.nageoffer.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.nageoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
-import com.nageoffer.shortlink.admin.dto.resp.UserRespDto;
+import com.nageoffer.shortlink.admin.dto.req.UserUpdateReqDTO;
+import com.nageoffer.shortlink.admin.dto.resp.UserLoginRespDTO;
+import com.nageoffer.shortlink.admin.dto.resp.UserRespDTO;
 import com.nageoffer.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
 import static com.nageoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
-import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME_EXIST;
-import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_FAIL;
+import static com.nageoffer.shortlink.admin.common.convention.errorcode.BaseErrorCode.USER_NAME_PASSWORD_VERIFY_ERROR;
+import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.*;
 
 /**
  * @Author: Nuyoah
@@ -31,18 +40,18 @@ import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements UserService {
 
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
-
     private final RedissonClient redissonClient;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public UserRespDto getUserByUsername(String username) {
+    public UserRespDTO getUserByUsername(String username) {
         LambdaQueryWrapper<UserDo> queryWrapper = Wrappers.lambdaQuery(UserDo.class)
                 .eq(UserDo::getUsername, username);
         UserDo userDo = baseMapper.selectOne(queryWrapper);
         if (userDo == null) {
-            throw new ClientException("这是客户端返回的错误", UserErrorCodeEnum.USER_NULL);
+            throw new ClientException("这是客户端返回的错误,用户名不存在", USER_NULL);
         }
-        UserRespDto userRespDto = BeanUtil.copyProperties(userDo, UserRespDto.class);
+        UserRespDTO userRespDto = BeanUtil.copyProperties(userDo, UserRespDTO.class);
         return userRespDto;
     }
 
@@ -65,11 +74,48 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
                 }
                 userRegisterCachePenetrationBloomFilter.add(registerReqDTO.getUsername());
                 return;
-            }else {
+            } else {
                 throw new ClientException(USER_NAME_EXIST);
             }
         } finally {
             lock.unlock();
         }
     }
+
+    @Override
+    public void update(UserUpdateReqDTO updateReqDTO) {
+        // TODO 验证当前用户名是否为登录用户
+        LambdaUpdateWrapper<UserDo> updateWrapper = Wrappers.lambdaUpdate(UserDo.class)
+                .eq(UserDo::getUsername, updateReqDTO.getUsername());
+        baseMapper.update(BeanUtil.toBean(updateReqDTO, UserDo.class), updateWrapper);
+    }
+
+    @Override
+    public UserLoginRespDTO login(UserLoginReqDTO loginReqDTO) {
+        LambdaQueryWrapper<UserDo> queryWrapper = Wrappers.lambdaQuery(UserDo.class)
+                .eq(UserDo::getUsername, loginReqDTO.getUsername())
+                .eq(UserDo::getPassword, loginReqDTO.getPassword())
+                .eq(UserDo::getDelFlag, 0);
+        UserDo userDo = baseMapper.selectOne(queryWrapper);
+        if (userDo == null) {
+            throw new ClientException(USER_NAME_PASSWORD_VERIFY_ERROR);
+        }
+        Boolean isOnline = stringRedisTemplate.hasKey("login_" + loginReqDTO.getUsername());
+        if (isOnline != null && isOnline) {
+            throw new ClientException("用户已登录！");
+        }
+        String token = UUID.randomUUID().toString();
+        //stringRedisTemplate.opsForValue().set(uuid, JSON.toJSONString(userDo), 30, TimeUnit.MINUTES);
+        //使用哈希结构防止多次登录产生不同的token
+        stringRedisTemplate.opsForHash().put("login_" + loginReqDTO.getUsername(), token, JSON.toJSONString(userDo));
+        stringRedisTemplate.expire("login_" + loginReqDTO.getUsername(), 30L, TimeUnit.MINUTES);
+        return new UserLoginRespDTO(token);
+    }
+
+    @Override
+    public Boolean checkLogin(String username, String token) {
+        return stringRedisTemplate.opsForHash().get("login_" + username, token) != null;
+    }
+
+
 }

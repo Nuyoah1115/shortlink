@@ -10,7 +10,7 @@ import lombok.Data;
  * @Description: 用户返回参数响应
  **/
 @Data
-public class UserRespDto {
+public class UserRespDTO {
     /**
      * id
      */
