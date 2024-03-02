@@ -108,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
         //stringRedisTemplate.opsForValue().set(uuid, JSON.toJSONString(userDo), 30, TimeUnit.MINUTES);
         //使用哈希结构防止多次登录产生不同的token
         stringRedisTemplate.opsForHash().put("login_" + loginReqDTO.getUsername(), token, JSON.toJSONString(userDo));
-        stringRedisTemplate.expire("login_" + loginReqDTO.getUsername(), 30L, TimeUnit.MINUTES);
+        stringRedisTemplate.expire("login_" + loginReqDTO.getUsername(), 30L, TimeUnit.DAYS);
         return new UserLoginRespDTO(token);
     }
 
