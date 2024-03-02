@@ -11,7 +11,7 @@ import com.nageoffer.shortlink.admin.dto.resp.UserRespDTO;
 /**
  * @Author: Nuyoah
  * @Date: idate
- * @Description:
+ * @Description: 用户接口层
  **/
 public interface UserService extends IService<UserDo> {
     /**
