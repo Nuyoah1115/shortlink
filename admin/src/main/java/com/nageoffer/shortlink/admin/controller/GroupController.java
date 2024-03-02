@@ -44,9 +44,19 @@ public class GroupController {
      * @param updateDTO
      * @return
      */
-    @PostMapping("/api/short-link/v1/group/update")
+    @PutMapping("/api/short-link/v1/group")
     public Result<Void> updateGroup(@RequestBody GroupReqUpdateDTO updateDTO){
         groupService.updateGroup(updateDTO);
+        return Results.success();
+    }
+
+    /**
+     * 根据标识gid删除短链接分组
+     * @return
+     */
+    @DeleteMapping("/api/short-link/v1/group/")
+    public Result<Void> deleteGroup(@RequestParam String gid){
+        groupService.deleteGroup(gid);
         return Results.success();
     }
 }
