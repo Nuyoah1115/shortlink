@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nageoffer.shortlink.admin.common.biz.user.UserContext;
 import com.nageoffer.shortlink.admin.dao.entity.GroupDO;
 import com.nageoffer.shortlink.admin.dao.mapper.GroupMapper;
+import com.nageoffer.shortlink.admin.dto.req.GroupReqOrderDTO;
 import com.nageoffer.shortlink.admin.dto.req.GroupReqUpdateDTO;
 import com.nageoffer.shortlink.admin.dto.resp.GroupRespDTO;
 import com.nageoffer.shortlink.admin.service.GroupService;
@@ -74,6 +75,29 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         baseMapper.update(groupDO,updateWrapper);
     }
 
+    /**
+     *
+     * @param orderDTOS
+     */
+    @Override
+    public void sortGroup(List<GroupReqOrderDTO> orderDTOS) {
+        orderDTOS.forEach(one->{
+            GroupDO groupDO = GroupDO.builder()
+                    .sortOrder(one.getSortOrder())
+                    .build();
+            LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
+                    .eq(GroupDO::getUsername, UserContext.getUsername())
+                    .eq(GroupDO::getGid, one.getGid())
+                    .eq(GroupDO::getDelFlag, 0);
+            baseMapper.update(groupDO,updateWrapper);
+        });
+    }
+
+    /**
+     * gid是否重复
+     * @param gid 分组标识
+     * @return
+     */
     private boolean hasGid(String gid) {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
