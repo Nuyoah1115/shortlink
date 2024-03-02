@@ -5,10 +5,16 @@ import lombok.Data;
 /**
  * @Author: Nuyoah
  * @Date: idate
- * @Description: 短链接分组创建参数实体
+ * @Description: 短链接分组修改参数实体
  **/
 @Data
-public class GroupReqDTO {
+public class GroupReqUpdateDTO {
+
+  /**
+   * 分组标识gid
+   */
+  private String gid;
+
   /**
    * 分组名
    */
