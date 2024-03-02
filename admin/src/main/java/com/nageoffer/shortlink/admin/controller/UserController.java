@@ -10,6 +10,7 @@ import com.nageoffer.shortlink.admin.dto.resp.UserActualRespDTO;
 import com.nageoffer.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.nageoffer.shortlink.admin.dto.resp.UserRespDTO;
 import com.nageoffer.shortlink.admin.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,7 @@ public class UserController {
      * 查询用户名是否存在
      */
     @GetMapping("/api/short-link/v1/user/has-username")
+    @ApiOperation("查询用户名是否已存在，存在返回true代表不可用")
     public Result<Boolean> hasUsername(@RequestParam("username") String username) {
         return Results.success(userService.hasUsername(username));
     }
