@@ -10,6 +10,7 @@ import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
 import com.nageoffer.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkSaveReqDTO;
+import com.nageoffer.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.project.dto.resp.ShortLinkSaveRespDTO;
 import com.nageoffer.shortlink.project.service.ShortLinkService;
 import com.nageoffer.shortlink.project.util.HashUtil;
@@ -58,14 +59,14 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     }
 
     @Override
-    public IPage<ShortLinkSaveRespDTO> pageShortLink(ShortLinkPageReqDTO pageReqDTO) {
+    public IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO pageReqDTO) {
         LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
                 .eq(ShortLinkDO::getGid, pageReqDTO.getGid())
                 .eq(ShortLinkDO::getEnableStatus, 0)
                 .eq(ShortLinkDO::getDelFlag, 0)
                 .orderByDesc(ShortLinkDO::getCreateTime);
         IPage<ShortLinkDO> resultPage = baseMapper.selectPage(pageReqDTO, queryWrapper);
-        return resultPage.convert(each -> BeanUtil.toBean(each, ShortLinkSaveRespDTO.class));
+        return resultPage.convert(each -> BeanUtil.toBean(each, ShortLinkPageRespDTO.class));
     }
 
     private String generateSuffix(ShortLinkSaveReqDTO saveReqDTO) {
