@@ -80,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
                     throw new ClientException(USER_EXIST);
                 }
                 userRegisterCachePenetrationBloomFilter.add(registerReqDTO.getUsername());
-                groupService.saveGroup("默认分组");
+                groupService.saveGroup(registerReqDTO.getUsername(),"默认分组");
                 return;
             }
             throw new ClientException(USER_NAME_EXIST);
