@@ -1,0 +1,43 @@
+package com.nageoffer.shortlink.admin.controller;
+
+import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.nageoffer.shortlink.admin.common.convention.result.Result;
+import com.nageoffer.shortlink.admin.common.convention.result.Results;
+import com.nageoffer.shortlink.admin.remote.dto.ShortLinkRemoteService;
+import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
+import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkSaveReqDTO;
+import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
+import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkSaveRespDTO;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @Author: Nuyoah
+ * @Date: idate
+ * @Description: 短链接后管控制层
+ **/
+@RestController
+public class ShortLinkController {
+
+  // TODO 后续重构为SpringCloud feign调用
+  ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
+  };
+  /**
+   * 创建短链接
+   */
+  @PostMapping("/api/short-link/admin/v1/create")
+  public Result<ShortLinkSaveRespDTO> createShortLink(@RequestBody ShortLinkSaveReqDTO saveReqDTO){
+    return shortLinkRemoteService.createShortLink(saveReqDTO);
+  }
+
+  /**
+   * 分页查询短链接
+   */
+  @GetMapping("/api/short-link/admin/v1/page")
+  public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO pageReqDTO){
+    return shortLinkRemoteService.pageShortLink(pageReqDTO);
+  }
+}
