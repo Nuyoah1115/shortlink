@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nageoffer.shortlink.admin.common.convention.result.Result;
 import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
 import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkSaveReqDTO;
+import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkSaveRespDTO;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +43,19 @@ public interface ShortLinkRemoteService {
         requestMap.put("current", pageReqDTO.getCurrent());
         requestMap.put("size", pageReqDTO.getSize());
         String resultPage = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/page", requestMap);
+        return JSON.parseObject(resultPage, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 查询短链接分组内短链接数量
+     * @param gids 分组标识数组
+     * @return 返回分组标识和数量集合
+     */
+    default Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(List<String> gids) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("gids",gids);
+        String resultPage = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/count", requestMap);
         return JSON.parseObject(resultPage, new TypeReference<>() {
         });
     }
