@@ -9,8 +9,8 @@ import lombok.Data;
  **/
 @Data
 public class GroupReqSaveDTO {
-  /**
-   * 分组名
-   */
-  private String name;
+    /**
+     * 分组名
+     */
+    private String name;
 }

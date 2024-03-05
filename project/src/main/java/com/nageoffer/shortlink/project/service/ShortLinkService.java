@@ -19,6 +19,7 @@ import java.util.List;
 public interface ShortLinkService extends IService<ShortLinkDO> {
     /**
      * 创建短链接
+     *
      * @param saveReqDTO 创建短链接请求参数
      * @return 返回短链接创建信息
      */
@@ -26,6 +27,7 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
 
     /**
      * 分页查询短链接
+     *
      * @param pageReqDTO 请求参数
      * @return 返回参数
      */
@@ -33,6 +35,7 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
 
     /**
      * 查询短链接分组内短链接数量
+     *
      * @param gids 请求参数
      * @return 返回参数
      */

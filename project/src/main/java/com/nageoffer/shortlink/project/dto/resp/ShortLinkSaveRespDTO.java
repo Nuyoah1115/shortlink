@@ -18,19 +18,19 @@ import java.util.Date;
 @NoArgsConstructor
 public class ShortLinkSaveRespDTO {
 
-  /**
-   * 完整短链接
-   */
-  private String fullShortUrl;
+    /**
+     * 完整短链接
+     */
+    private String fullShortUrl;
 
-  /**
-   * 原始链接
-   */
-  private String originUrl;
+    /**
+     * 原始链接
+     */
+    private String originUrl;
 
-  /**
-   * 分组标识
-   */
-  private String gid;
+    /**
+     * 分组标识
+     */
+    private String gid;
 
 }

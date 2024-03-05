@@ -6,5 +6,5 @@ package com.nageoffer.shortlink.admin.common.constant;
  * @Description: 后管Redis 缓存常量类
  **/
 public class RedisCacheConstant {
-  public static final String LOCK_USER_REGISTER_KEY = "short-link:lock_user-register:";
+    public static final String LOCK_USER_REGISTER_KEY = "short-link:lock_user-register:";
 }

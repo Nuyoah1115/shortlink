@@ -22,29 +22,29 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class ShortLinkController {
-  private final ShortLinkService shortLinkService;
+    private final ShortLinkService shortLinkService;
 
-  /**
-   * 创建短链接
-   */
-  @PostMapping("/api/short-link/v1/create")
-  public Result<ShortLinkSaveRespDTO> createShortLink(@RequestBody ShortLinkSaveReqDTO saveReqDTO){
-    return Results.success(shortLinkService.createShortLink(saveReqDTO));
-  }
+    /**
+     * 创建短链接
+     */
+    @PostMapping("/api/short-link/v1/create")
+    public Result<ShortLinkSaveRespDTO> createShortLink(@RequestBody ShortLinkSaveReqDTO saveReqDTO) {
+        return Results.success(shortLinkService.createShortLink(saveReqDTO));
+    }
 
-  /**
-   * 分页查询短链接
-   */
-  @GetMapping("/api/short-link/v1/page")
-  public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO pageReqDTO){
-    return Results.success(shortLinkService.pageShortLink(pageReqDTO));
-  }
+    /**
+     * 分页查询短链接
+     */
+    @GetMapping("/api/short-link/v1/page")
+    public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO pageReqDTO) {
+        return Results.success(shortLinkService.pageShortLink(pageReqDTO));
+    }
 
-  /**
-   * 统计短链接数量
-   */
-  @GetMapping("/api/short-link/v1/count")
-  public Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(@RequestParam("gids") List<String> gids){
-    return Results.success(shortLinkService.listGroupShortLinkCount(gids));
-  }
+    /**
+     * 统计短链接数量
+     */
+    @GetMapping("/api/short-link/v1/count")
+    public Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(@RequestParam("gids") List<String> gids) {
+        return Results.success(shortLinkService.listGroupShortLinkCount(gids));
+    }
 }

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -44,7 +45,7 @@ public class UserTransmitFilter implements Filter {
                 String username = httpServletRequest.getHeader("username");
                 String token = httpServletRequest.getHeader("token");
                 if (!StrUtil.isAllNotBlank(username, token)) {
-                    returnJson((HttpServletResponse)servletResponse,
+                    returnJson((HttpServletResponse) servletResponse,
                             JSON.toJSONString((Results.failure(new ClientException(USER_TOKEN_FAIL)))));
                     return;
                 }
@@ -55,7 +56,7 @@ public class UserTransmitFilter implements Filter {
                         throw new ClientException(USER_TOKEN_FAIL);
                     }
                 } catch (Exception e) {
-                    returnJson((HttpServletResponse)servletResponse,
+                    returnJson((HttpServletResponse) servletResponse,
                             JSON.toJSONString((Results.failure(new ClientException(USER_TOKEN_FAIL)))));
                     return;
                 }
@@ -70,7 +71,7 @@ public class UserTransmitFilter implements Filter {
         }
     }
 
-    private void returnJson(HttpServletResponse response, String json) throws Exception{
+    private void returnJson(HttpServletResponse response, String json) throws Exception {
         PrintWriter writer = null;
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=utf-8");

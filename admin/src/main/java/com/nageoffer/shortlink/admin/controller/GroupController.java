@@ -33,30 +33,33 @@ public class GroupController {
 
     /**
      * 查询短链接分组集合
+     *
      * @return
      */
     @GetMapping("/api/short-link/admin/v1/group")
-    public Result<List<GroupRespDTO>> listGroup(){
+    public Result<List<GroupRespDTO>> listGroup() {
         return Results.success(groupService.listGroup());
     }
 
     /**
      * 修改短链接分组名称
+     *
      * @param updateDTO
      * @return
      */
     @PutMapping("/api/short-link/admin/v1/group")
-    public Result<Void> updateGroup(@RequestBody GroupReqUpdateDTO updateDTO){
+    public Result<Void> updateGroup(@RequestBody GroupReqUpdateDTO updateDTO) {
         groupService.updateGroup(updateDTO);
         return Results.success();
     }
 
     /**
      * 根据标识gid删除短链接分组
+     *
      * @return
      */
     @DeleteMapping("/api/short-link/admin/v1/group/")
-    public Result<Void> deleteGroup(@RequestParam String gid){
+    public Result<Void> deleteGroup(@RequestParam String gid) {
         groupService.deleteGroup(gid);
         return Results.success();
     }

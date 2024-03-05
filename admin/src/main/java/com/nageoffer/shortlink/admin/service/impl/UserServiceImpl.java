@@ -80,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
                     throw new ClientException(USER_EXIST);
                 }
                 userRegisterCachePenetrationBloomFilter.add(registerReqDTO.getUsername());
-                groupService.saveGroup(registerReqDTO.getUsername(),"默认分组");
+                groupService.saveGroup(registerReqDTO.getUsername(), "默认分组");
                 return;
             }
             throw new ClientException(USER_NAME_EXIST);
@@ -126,8 +126,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
 
     @Override
     public void logout(String username, String token) {
-        if (checkLogin(username,token)) {
-            stringRedisTemplate.delete("login_"+ username);
+        if (checkLogin(username, token)) {
+            stringRedisTemplate.delete("login_" + username);
             return;
         }
         throw new ClientException("用户token不存在或用户未登录");

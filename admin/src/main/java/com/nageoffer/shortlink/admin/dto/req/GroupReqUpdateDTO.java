@@ -10,13 +10,13 @@ import lombok.Data;
 @Data
 public class GroupReqUpdateDTO {
 
-  /**
-   * 分组标识gid
-   */
-  private String gid;
+    /**
+     * 分组标识gid
+     */
+    private String gid;
 
-  /**
-   * 分组名
-   */
-  private String name;
+    /**
+     * 分组名
+     */
+    private String name;
 }

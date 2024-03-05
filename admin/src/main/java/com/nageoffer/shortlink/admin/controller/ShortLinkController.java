@@ -20,22 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ShortLinkController {
 
-  // TODO 后续重构为SpringCloud feign调用
-  ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
-  };
-  /**
-   * 创建短链接
-   */
-  @PostMapping("/api/short-link/admin/v1/create")
-  public Result<ShortLinkSaveRespDTO> createShortLink(@RequestBody ShortLinkSaveReqDTO saveReqDTO){
-    return shortLinkRemoteService.createShortLink(saveReqDTO);
-  }
+    // TODO 后续重构为SpringCloud feign调用
+    ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
+    };
 
-  /**
-   * 分页查询短链接
-   */
-  @GetMapping("/api/short-link/admin/v1/page")
-  public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO pageReqDTO){
-    return shortLinkRemoteService.pageShortLink(pageReqDTO);
-  }
+    /**
+     * 创建短链接
+     */
+    @PostMapping("/api/short-link/admin/v1/create")
+    public Result<ShortLinkSaveRespDTO> createShortLink(@RequestBody ShortLinkSaveReqDTO saveReqDTO) {
+        return shortLinkRemoteService.createShortLink(saveReqDTO);
+    }
+
+    /**
+     * 分页查询短链接
+     */
+    @GetMapping("/api/short-link/admin/v1/page")
+    public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO pageReqDTO) {
+        return shortLinkRemoteService.pageShortLink(pageReqDTO);
+    }
 }

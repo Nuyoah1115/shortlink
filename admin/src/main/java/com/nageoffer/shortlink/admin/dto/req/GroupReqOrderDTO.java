@@ -9,13 +9,13 @@ import lombok.Data;
  **/
 @Data
 public class GroupReqOrderDTO {
-  /**
-   * 分组标识
-   */
-  private String gid;
+    /**
+     * 分组标识
+     */
+    private String gid;
 
-  /**
-   * 排序
-   */
-  private Integer sortOrder;
+    /**
+     * 排序
+     */
+    private Integer sortOrder;
 }

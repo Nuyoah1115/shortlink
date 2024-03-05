@@ -23,17 +23,19 @@ import java.util.Map;
 public interface ShortLinkRemoteService {
     /**
      * 创建短链接
+     *
      * @param saveReqDTO 创建短链接请求参数
      * @return 短链接创建响应
      */
     default Result<ShortLinkSaveRespDTO> createShortLink(ShortLinkSaveReqDTO saveReqDTO) {
         String resultBodyStr = HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/create", JSON.toJSONString(saveReqDTO));
-        return JSON.parseObject(resultBodyStr,new TypeReference<>() {
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
         });
     }
 
     /**
      * 分页查询短链接
+     *
      * @param pageReqDTO 分页短链接请求参数
      * @return 短链接分页查询响应
      */
@@ -49,12 +51,13 @@ public interface ShortLinkRemoteService {
 
     /**
      * 查询短链接分组内短链接数量
+     *
      * @param gids 分组标识数组
      * @return 返回分组标识和数量集合
      */
     default Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(List<String> gids) {
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gids",gids);
+        requestMap.put("gids", gids);
         String resultPage = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/count", requestMap);
         return JSON.parseObject(resultPage, new TypeReference<>() {
         });

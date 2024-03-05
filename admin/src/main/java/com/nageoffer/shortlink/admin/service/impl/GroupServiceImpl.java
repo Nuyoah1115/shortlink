@@ -38,7 +38,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public void saveGroup(String groupName) {
-        this.saveGroup(UserContext.getUsername(),groupName);
+        this.saveGroup(UserContext.getUsername(), groupName);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         String gid;
         do {
             gid = RandomStringGenerator.generateRandomString();
-        } while (!hasGid(username,gid));
+        } while (!hasGid(username, gid));
         GroupDO groupDO = GroupDO.builder()
                 .gid(gid)
                 .sortOrder(0)
@@ -66,7 +66,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         Result<List<ShortLinkGroupCountQueryRespDTO>> listResult = shortLinkRemoteService
                 .listGroupShortLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
         List<GroupRespDTO> groupRespDTOS = BeanUtil.copyToList(groupDOList, GroupRespDTO.class);
-        groupRespDTOS.forEach(each->{
+        groupRespDTOS.forEach(each -> {
             Optional<ShortLinkGroupCountQueryRespDTO> first = listResult.getData().stream()
                     .filter(item -> Objects.equals(item.getGid(), each.getGid())).findFirst();
             first.ifPresent(item -> each.setShortLinkCount(first.get().getShortLinkCount()));
@@ -77,31 +77,30 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     @Override
     public void updateGroup(GroupReqUpdateDTO updateDTO) {
         LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
-                .eq(GroupDO::getUsername,UserContext.getUsername())
+                .eq(GroupDO::getUsername, UserContext.getUsername())
                 .eq(GroupDO::getGid, updateDTO.getGid())
                 .eq(GroupDO::getDelFlag, 0);
         GroupDO groupDO = GroupDO.builder().name(updateDTO.getName()).build();
-        baseMapper.update(groupDO,updateWrapper);
+        baseMapper.update(groupDO, updateWrapper);
     }
 
     @Override
     public void deleteGroup(String gid) {
         LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
-                .eq(GroupDO::getUsername,UserContext.getUsername())
+                .eq(GroupDO::getUsername, UserContext.getUsername())
                 .eq(GroupDO::getGid, gid)
                 .eq(GroupDO::getDelFlag, 0);
         GroupDO groupDO = new GroupDO();
         groupDO.setDelFlag(1);
-        baseMapper.update(groupDO,updateWrapper);
+        baseMapper.update(groupDO, updateWrapper);
     }
 
     /**
-     *
      * @param orderDTOS
      */
     @Override
     public void sortGroup(List<GroupReqOrderDTO> orderDTOS) {
-        orderDTOS.forEach(one->{
+        orderDTOS.forEach(one -> {
             GroupDO groupDO = GroupDO.builder()
                     .sortOrder(one.getSortOrder())
                     .build();
@@ -109,16 +108,17 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                     .eq(GroupDO::getUsername, UserContext.getUsername())
                     .eq(GroupDO::getGid, one.getGid())
                     .eq(GroupDO::getDelFlag, 0);
-            baseMapper.update(groupDO,updateWrapper);
+            baseMapper.update(groupDO, updateWrapper);
         });
     }
 
     /**
      * gid是否重复
+     *
      * @param gid 分组标识
      * @return
      */
-    private boolean hasGid(String username,String gid) {
+    private boolean hasGid(String username, String gid) {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
                 .eq(GroupDO::getUsername, Optional.ofNullable(username).orElse(UserContext.getUsername()));

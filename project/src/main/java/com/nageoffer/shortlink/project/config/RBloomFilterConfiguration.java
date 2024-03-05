@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RBloomFilterConfiguration {
 
-  /**
-   * 防止短链接创建查询数据库的布隆过滤器
-   */
-  @Bean
-  public RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter(RedissonClient redissonClient) {
-    RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter("shortUriCreateCachePenetrationBloomFilter");
-    cachePenetrationBloomFilter.tryInit(10000000L, 0.001);
-    return cachePenetrationBloomFilter;
-  }
+    /**
+     * 防止短链接创建查询数据库的布隆过滤器
+     */
+    @Bean
+    public RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter(RedissonClient redissonClient) {
+        RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter("shortUriCreateCachePenetrationBloomFilter");
+        cachePenetrationBloomFilter.tryInit(10000000L, 0.001);
+        return cachePenetrationBloomFilter;
+    }
 }
