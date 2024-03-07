@@ -27,16 +27,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jodd.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import javax.print.Doc;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +67,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final StringRedisTemplate stringRedisTemplate;
     private final ShortLinkGotoMapper shortLinkGotoMapper;
     private final RedissonClient redissonClient;
+    private final RestTemplate restTemplate;
 
     @Override
     public ShortLinkSaveRespDTO createShortLink(ShortLinkSaveReqDTO saveReqDTO) {
@@ -67,6 +77,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         shortLinkDO.setShortUri(generateSuffix(saveReqDTO));
         shortLinkDO.setEnableStatus(0);
         shortLinkDO.setFullShortUrl(fullShortUrl);
+        shortLinkDO.setFavicon(getFaviconUrl(saveReqDTO.getOriginUrl()));
         ShortLinkGotoDO shortLinkGotoDO = ShortLinkGotoDO.builder()
                 .fullShortUrl(fullShortUrl)
                 .gid(saveReqDTO.getGid())
@@ -256,5 +267,22 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             customGenerateCount++;
         }
         return shortUri;
+    }
+
+    @SneakyThrows
+    private String getFaviconUrl(String url) {
+        URL tagetUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection)tagetUrl.openConnection();
+        connection.setRequestMethod("GET");
+        connection.connect();
+        int responseCode = connection.getResponseCode();
+        if (HttpURLConnection.HTTP_OK == responseCode){
+            Document document = Jsoup.connect(url).get();
+            Element faviconUrl = document.select("link[rel~=(?i)^(shortcut )?icon]").first();
+            if (faviconUrl!=null){
+                return faviconUrl.attr("abs:href");
+            }
+        }
+        return null;
     }
 }
