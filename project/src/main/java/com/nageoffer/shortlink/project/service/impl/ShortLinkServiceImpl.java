@@ -85,7 +85,6 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         try {
             baseMapper.insert(shortLinkDO);
             shortLinkGotoMapper.insert(shortLinkGotoDO);
-
         } catch (DuplicateKeyException ex) {
             LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
                     .eq(ShortLinkDO::getFullShortUrl, fullShortUrl);
@@ -272,14 +271,14 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     @SneakyThrows
     private String getFaviconUrl(String url) {
         URL tagetUrl = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection)tagetUrl.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) tagetUrl.openConnection();
         connection.setRequestMethod("GET");
         connection.connect();
         int responseCode = connection.getResponseCode();
-        if (HttpURLConnection.HTTP_OK == responseCode){
+        if (HttpURLConnection.HTTP_OK == responseCode) {
             Document document = Jsoup.connect(url).get();
             Element faviconUrl = document.select("link[rel~=(?i)^(shortcut )?icon]").first();
-            if (faviconUrl!=null){
+            if (faviconUrl != null) {
                 return faviconUrl.attr("abs:href");
             }
         }
