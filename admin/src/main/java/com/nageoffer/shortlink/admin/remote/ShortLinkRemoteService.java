@@ -70,7 +70,7 @@ public interface ShortLinkRemoteService {
      * @param updateReqDTO 修改接收参数
      */
     default void updateShortLink(String gid, ShortLinkUpdateReqDTO updateReqDTO) {
-        String resultBodyStr = HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/update?gid=" + gid, JSON.toJSONString(updateReqDTO));
+        HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/update?gid=" + gid, JSON.toJSONString(updateReqDTO));
     }
 
     /**
@@ -89,7 +89,7 @@ public interface ShortLinkRemoteService {
      * @param saveReqDTO
      */
     default void saveRecycleBin(RecycleBinSaveReqDTO saveReqDTO){
-        String resultBodyStr = HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/save", JSON.toJSONString(saveReqDTO));
+        HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/save", JSON.toJSONString(saveReqDTO));
     }
 
     /**
@@ -106,5 +106,13 @@ public interface ShortLinkRemoteService {
         String resultPage = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/page", requestMap);
         return JSON.parseObject(resultPage, new TypeReference<>() {
         });
+    }
+
+    /**
+     * 恢复短链接
+     * @param recoverReqDTO 短链接恢复请求参数
+     */
+    default void recoverRecycleBinShortLink(RecycleBinRecoverReqDTO recoverReqDTO){
+        HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/recover", JSON.toJSONString(recoverReqDTO));
     }
 }
