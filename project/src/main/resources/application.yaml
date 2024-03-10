@@ -15,3 +15,6 @@ spring:
     view:
       prefix: /templates/
       suffix: .html
+mybatis-plus:
+  configuration:
+    shrink-whitespaces-in-sql: true #从SQL中删除多余的空格字符
