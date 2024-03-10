@@ -3,16 +3,14 @@ package com.nageoffer.shortlink.project.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nageoffer.shortlink.project.common.convention.result.Result;
 import com.nageoffer.shortlink.project.common.convention.result.Results;
+import com.nageoffer.shortlink.project.dto.req.RecycleBinRemoveReqDTO;
 import com.nageoffer.shortlink.project.dto.req.RecycleBinPageReqDTO;
 import com.nageoffer.shortlink.project.dto.req.RecycleBinRecoverReqDTO;
 import com.nageoffer.shortlink.project.dto.req.RecycleBinSaveReqDTO;
 import com.nageoffer.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.project.service.RecycleBinService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  @Author: Nuyoah
@@ -45,8 +43,17 @@ public class RecycleBinController {
      * 恢复短链接
      */
     @PostMapping("/api/short-link/v1/recycle-bin/recover")
-    public Result<Void> recoverRecycleBinShortLink(@RequestBody RecycleBinRecoverReqDTO recoverReqDTO){
+    public Result<Void> recoverRecycleBinShortLink(@RequestBody RecycleBinRecoverReqDTO recoverReqDTO) {
         recycleBinService.recoverRecycleBinShortLink(recoverReqDTO);
+        return Results.success();
+    }
+
+    /**
+     * 移除短链接
+     */
+    @PostMapping("/api/short-link/v1/recycle-bin/remove")
+    public Result<Void> removeRecycleBinShortLink(@RequestBody RecycleBinRemoveReqDTO removeReqDTO) {
+        recycleBinService.removeRecycleBinShortLink(removeReqDTO);
         return Results.success();
     }
 }

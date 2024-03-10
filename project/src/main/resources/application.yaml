@@ -18,3 +18,9 @@ spring:
 mybatis-plus:
   configuration:
     shrink-whitespaces-in-sql: true #从SQL中删除多余的空格字符
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto

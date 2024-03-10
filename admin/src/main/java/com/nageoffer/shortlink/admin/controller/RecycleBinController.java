@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nageoffer.shortlink.admin.common.convention.result.Result;
 import com.nageoffer.shortlink.admin.common.convention.result.Results;
 import com.nageoffer.shortlink.admin.remote.ShortLinkRemoteService;
-import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinPageReqDTO;
-import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinRecoverReqDTO;
-import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinSaveReqDTO;
-import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
+import com.nageoffer.shortlink.admin.remote.dto.req.*;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.admin.service.RecycleBinService;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +47,17 @@ public class RecycleBinController {
      * 恢复短链接
      */
     @PostMapping("/api/short-link/admin/v1/recycle-bin/recover")
-    public Result<Void> recoverRecycleBinShortLink(@RequestBody RecycleBinRecoverReqDTO recoverReqDTO){
+    public Result<Void> recoverRecycleBinShortLink(@RequestBody RecycleBinRecoverReqDTO recoverReqDTO) {
         shortLinkRemoteService.recoverRecycleBinShortLink(recoverReqDTO);
+        return Results.success();
+    }
+
+    /**
+     * 移除短链接
+     */
+    @PostMapping("/api/short-link/admin/v1/recycle-bin/remove")
+    public Result<Void> removeRecycleBinShortLink(@RequestBody RecycleBinRemoveReqDTO removeReqDTO) {
+        shortLinkRemoteService.removeRecycleBinShortLink(removeReqDTO);
         return Results.success();
     }
 }

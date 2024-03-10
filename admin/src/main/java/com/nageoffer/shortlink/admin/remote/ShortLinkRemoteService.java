@@ -88,7 +88,7 @@ public interface ShortLinkRemoteService {
      * 短链接移至回收站
      * @param saveReqDTO
      */
-    default void saveRecycleBin(RecycleBinSaveReqDTO saveReqDTO){
+    default void saveRecycleBin(RecycleBinSaveReqDTO saveReqDTO) {
         HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/save", JSON.toJSONString(saveReqDTO));
     }
 
@@ -98,9 +98,9 @@ public interface ShortLinkRemoteService {
      * @param pageReqDTO 分页短链接请求参数
      * @return 短链接分页查询响应
      */
-    default IPage<ShortLinkPageRespDTO> pageRecycleBinShortLink(RecycleBinPageReqDTO pageReqDTO){
+    default IPage<ShortLinkPageRespDTO> pageRecycleBinShortLink(RecycleBinPageReqDTO pageReqDTO) {
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gids",pageReqDTO.getGids());
+        requestMap.put("gids", pageReqDTO.getGids());
         requestMap.put("current", pageReqDTO.getCurrent());
         requestMap.put("size", pageReqDTO.getSize());
         String resultPage = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/page", requestMap);
@@ -112,7 +112,11 @@ public interface ShortLinkRemoteService {
      * 恢复短链接
      * @param recoverReqDTO 短链接恢复请求参数
      */
-    default void recoverRecycleBinShortLink(RecycleBinRecoverReqDTO recoverReqDTO){
+    default void recoverRecycleBinShortLink(RecycleBinRecoverReqDTO recoverReqDTO) {
         HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/recover", JSON.toJSONString(recoverReqDTO));
+    }
+
+    default void removeRecycleBinShortLink(RecycleBinRemoveReqDTO removeReqDTO) {
+        HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/recover", JSON.toJSONString(removeReqDTO));
     }
 }
