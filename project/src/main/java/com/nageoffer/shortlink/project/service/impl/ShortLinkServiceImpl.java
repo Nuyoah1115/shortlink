@@ -17,14 +17,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nageoffer.shortlink.project.common.convention.exception.ClientException;
 import com.nageoffer.shortlink.project.common.convention.exception.ServiceException;
 import com.nageoffer.shortlink.project.common.enums.ValidDateTypeEnum;
-import com.nageoffer.shortlink.project.dao.entity.LinkAccessStatsDO;
-import com.nageoffer.shortlink.project.dao.entity.LinkLocaleStatsDO;
-import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
-import com.nageoffer.shortlink.project.dao.entity.ShortLinkGotoDO;
-import com.nageoffer.shortlink.project.dao.mapper.LinkAccessStatsMapper;
-import com.nageoffer.shortlink.project.dao.mapper.LinkLocaleStatsMapper;
-import com.nageoffer.shortlink.project.dao.mapper.ShortLinkGotoMapper;
-import com.nageoffer.shortlink.project.dao.mapper.ShortLinkMapper;
+import com.nageoffer.shortlink.project.dao.entity.*;
+import com.nageoffer.shortlink.project.dao.mapper.*;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkSaveReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkUpdateReqDTO;
@@ -51,7 +45,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -62,6 +55,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.*;
 import static com.nageoffer.shortlink.project.common.constant.ShortLinkConstant.AMAP_REMOTE_URL;
 import static com.nageoffer.shortlink.project.util.LinkUtil.getActualIp;
+import static com.nageoffer.shortlink.project.util.LinkUtil.getOS;
 
 /**
  * @Author: Nuyoah
@@ -78,6 +72,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final RedissonClient redissonClient;
     private final LinkAccessStatsMapper linkAccessStatsMapper;
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
+    private final LinkOSStatsMapper linkOSStatsMapper;
 
     @Value("${short-link.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
@@ -314,14 +309,23 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 boolean unknownFlag = StrUtil.equals(province, "[]");
                 LinkLocaleStatsDO linkLocaleStatsDO = LinkLocaleStatsDO.builder()
                         .fullShortUrl(fullShortUrl)
+                        .gid(gid)
+                        .date(new Date())
                         .province(unknownFlag ? "未知" : province)
                         .city(unknownFlag ? "未知" : localeResultObj.getString("city"))
                         .adcode(unknownFlag ? "未知" : localeResultObj.getString("adcode"))
                         .cnt(1)
-                        .gid(gid)
-                        .date(new Date())
+                        .country("中国")
                         .build();
                 linkLocaleStatsMapper.shortLinkLocaleStats(linkLocaleStatsDO);
+                LinkOSStatsDO linkOSStatsDO = LinkOSStatsDO.builder()
+                        .os(getOS(request))
+                        .fullShortUrl(fullShortUrl)
+                        .gid(gid)
+                        .cnt(1)
+                        .date(new Date())
+                        .build();
+                linkOSStatsMapper.shortLinkOSStats(linkOSStatsDO);
             }
         } catch (Throwable e) {
             log.error("短链接访问量统计异常！", e);
