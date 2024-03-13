@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.nageoffer.shortlink.admin.common.biz.user.UserContext;
 import com.nageoffer.shortlink.admin.common.convention.exception.ServiceException;
+import com.nageoffer.shortlink.admin.common.convention.result.Result;
+import com.nageoffer.shortlink.admin.common.convention.result.Results;
 import com.nageoffer.shortlink.admin.dao.entity.GroupDO;
 import com.nageoffer.shortlink.admin.dao.mapper.GroupMapper;
 import com.nageoffer.shortlink.admin.remote.ShortLinkRemoteService;
@@ -34,7 +36,7 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     };
 
     @Override
-    public IPage<ShortLinkPageRespDTO> pageRecycleBinShortLink(RecycleBinPageReqDTO pageReqDTO) {
+    public Result<IPage<ShortLinkPageRespDTO>> pageRecycleBinShortLink(RecycleBinPageReqDTO pageReqDTO) {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getUsername, UserContext.getUsername())
                 .eq(GroupDO::getDelFlag, 0);

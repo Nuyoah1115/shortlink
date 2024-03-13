@@ -40,7 +40,7 @@ public class RecycleBinController {
      */
     @GetMapping("/api/short-link/admin/v1/recycle-bin/page")
     public Result<IPage<ShortLinkPageRespDTO>> pageRecycleBinShortLink(RecycleBinPageReqDTO pageReqDTO) {
-        return Results.success(recycleBinService.pageRecycleBinShortLink(pageReqDTO));
+        return recycleBinService.pageRecycleBinShortLink(pageReqDTO);
     }
 
     /**
