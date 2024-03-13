@@ -89,6 +89,9 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         String fullShortUrl = saveReqDTO.getDomain() + "/" + shortLinkSuffix;
         shortLinkDO.setShortUri(shortLinkSuffix);
         shortLinkDO.setEnableStatus(0);
+        shortLinkDO.setTotalPv(0);
+        shortLinkDO.setTotalUv(0);
+        shortLinkDO.setTotalUip(0);
         shortLinkDO.setFullShortUrl(fullShortUrl);
         shortLinkDO.setFavicon(getFaviconUrl(saveReqDTO.getOriginUrl()));
         ShortLinkGotoDO shortLinkGotoDO = ShortLinkGotoDO.builder()
