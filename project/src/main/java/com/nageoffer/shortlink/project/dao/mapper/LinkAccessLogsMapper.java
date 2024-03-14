@@ -132,7 +132,7 @@ public interface LinkAccessLogsMapper extends BaseMapper<LinkAccessLogsDO> {
     );
 
     /**
-     * 根据短链接获取指定日期内PV、UV、UIP数据
+     *  根据短链接获取指定日期内PV、UV、UIP数据
      */
     @Select("SELECT " +
             "    COUNT(user) AS pv, " +

@@ -18,11 +18,13 @@ spring:
 mybatis-plus:
   configuration:
     shrink-whitespaces-in-sql: true #从SQL中删除多余的空格字符
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-delete-field: delFlag
       logic-delete-value: 1
       logic-not-delete-value: 0
+  mapper-locations: classpath:mapper/*.xml
 short-link:
   stats:
     locale:
