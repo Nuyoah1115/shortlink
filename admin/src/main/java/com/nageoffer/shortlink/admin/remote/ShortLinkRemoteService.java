@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nageoffer.shortlink.admin.common.convention.result.Result;
 import com.nageoffer.shortlink.admin.common.convention.result.Results;
 import com.nageoffer.shortlink.admin.remote.dto.req.*;
+import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkBatchCreateRespDTO;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkSaveRespDTO;
@@ -118,7 +119,22 @@ public interface ShortLinkRemoteService {
         HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/recover", JSON.toJSONString(recoverReqDTO));
     }
 
+    /**
+     * 移除短链接
+     * @param removeReqDTO 短链接移除请求参数
+     */
     default void removeRecycleBinShortLink(RecycleBinRemoveReqDTO removeReqDTO) {
         HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/recover", JSON.toJSONString(removeReqDTO));
+    }
+
+    /**
+     * 批量创建短链接
+     * @param saveReqDTO 批量创建短链接请求参数
+     * @return 批量创建短链接返回参数
+     */
+    default Result<ShortLinkBatchCreateRespDTO> batchCreateShortLink(ShortLinkBatchCreateReqDTO saveReqDTO){
+        String resultBodyStr = HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/create/batch", JSON.toJSONString(saveReqDTO));
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
     }
 }
