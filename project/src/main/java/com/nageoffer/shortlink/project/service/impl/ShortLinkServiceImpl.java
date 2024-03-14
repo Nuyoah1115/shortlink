@@ -204,6 +204,16 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .build();
                 baseMapper.update(shortLinkDO, updateWrapper);
             }
+            if (!Objects.equals(hasShortLinkDO.getValidDateType(), updateReqDTO.getValidDateType())
+                    || !Objects.equals(hasShortLinkDO.getValidDate(), updateReqDTO.getValidDate())) {
+                stringRedisTemplate.delete(String.format(GOTO_SHORT_LINK_KEY, updateReqDTO.getFullShortUrl()));
+                if (hasShortLinkDO.getValidDate() != null && hasShortLinkDO.getValidDate().before(new Date())){
+                    if (Objects.equals(updateReqDTO.getValidDateType(),ValidDateTypeEnum.PERMANENT.getType())
+                            || updateReqDTO.getValidDate().after(new Date())){
+                        stringRedisTemplate.delete(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, updateReqDTO.getFullShortUrl()));
+                    }
+                }
+            }
         } else {
             throw new ClientException("该短连接不存在!");
         }
