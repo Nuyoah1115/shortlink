@@ -31,3 +31,9 @@ short-link:
   stats:
     locale:
       amap-key: 0e036d9efb2606dc89f858e31ea7593d
+  goto-domain:
+    white-list:
+      enable: true
+      names: '拿个offer'
+      details:
+        - nageoffer.com
