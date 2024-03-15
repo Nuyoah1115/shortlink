@@ -57,8 +57,8 @@ public class ShortLinkController {
      * 修改短链接
      */
     @PostMapping("/api/short-link/admin/v1/update")
-    public Result<Void> updateShortLink(@RequestParam String gid, @RequestBody ShortLinkUpdateReqDTO updateReqDTO) {
-        shortLinkRemoteService.updateShortLink(gid, updateReqDTO);
+    public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO updateReqDTO) {
+        shortLinkRemoteService.updateShortLink(updateReqDTO);
         return Results.success();
     }
 

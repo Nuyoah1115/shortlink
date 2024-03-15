@@ -36,7 +36,7 @@ public class ShortLinkController {
      */
     @GetMapping("/{short-uri}")
     public void restoreUrl(@PathVariable("short-uri") String shortUri, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        shortLinkService.restoreUrl(shortUri,request,response);
+        shortLinkService.restoreUrl(shortUri, request, response);
     }
 
     /**
@@ -59,8 +59,8 @@ public class ShortLinkController {
      * 修改短链接
      */
     @PostMapping("/api/short-link/v1/update")
-    public Result<Void> updateShortLink(@RequestParam String gid, @RequestBody ShortLinkUpdateReqDTO updateReqDTO) {
-        shortLinkService.updateShortLink(gid, updateReqDTO);
+    public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO updateReqDTO) {
+        shortLinkService.updateShortLink(updateReqDTO);
         return Results.success();
     }
 

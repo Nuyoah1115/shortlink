@@ -44,7 +44,7 @@ public interface ShortLinkRemoteService {
     default Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO pageReqDTO) {
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("gid", pageReqDTO.getGid());
-        requestMap.put("orderTag",pageReqDTO.getOrderTag());
+        requestMap.put("orderTag", pageReqDTO.getOrderTag());
         requestMap.put("current", pageReqDTO.getCurrent());
         requestMap.put("size", pageReqDTO.getSize());
         String resultPage = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/page", requestMap);
@@ -69,11 +69,10 @@ public interface ShortLinkRemoteService {
     /**
      * 修改短链接
      *
-     * @param gid          原分组标识
      * @param updateReqDTO 修改接收参数
      */
-    default void updateShortLink(String gid, ShortLinkUpdateReqDTO updateReqDTO) {
-        HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/update?gid=" + gid, JSON.toJSONString(updateReqDTO));
+    default void updateShortLink(ShortLinkUpdateReqDTO updateReqDTO) {
+        HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/update", JSON.toJSONString(updateReqDTO));
     }
 
     /**
@@ -132,7 +131,7 @@ public interface ShortLinkRemoteService {
      * @param saveReqDTO 批量创建短链接请求参数
      * @return 批量创建短链接返回参数
      */
-    default Result<ShortLinkBatchCreateRespDTO> batchCreateShortLink(ShortLinkBatchCreateReqDTO saveReqDTO){
+    default Result<ShortLinkBatchCreateRespDTO> batchCreateShortLink(ShortLinkBatchCreateReqDTO saveReqDTO) {
         String resultBodyStr = HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/create/batch", JSON.toJSONString(saveReqDTO));
         return JSON.parseObject(resultBodyStr, new TypeReference<>() {
         });
