@@ -3,6 +3,7 @@ package com.nageoffer.shortlink.project.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
+import com.nageoffer.shortlink.project.dto.biz.ShortLinkStatsRecordDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkBatchCreateReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkSaveReqDTO;
@@ -52,7 +53,7 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
      *
      * @param updateReqDTO 修改短链接参数
      */
-    void updateShortLink(String gid,ShortLinkUpdateReqDTO updateReqDTO);
+    void updateShortLink(ShortLinkUpdateReqDTO updateReqDTO);
 
     /**
      * 短链接跳转
@@ -70,4 +71,13 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
      * @return 批量创建短链接返回参数
      */
     ShortLinkBatchCreateRespDTO batchCreateShortLink(ShortLinkBatchCreateReqDTO requestParam);
+
+    /**
+     * 短链接统计
+     *
+     * @param fullShortUrl         完整短链接
+     * @param gid                  分组标识
+     * @param shortLinkStatsRecord 短链接统计实体参数
+     */
+    void shortLinkStats(String fullShortUrl, String gid, ShortLinkStatsRecordDTO shortLinkStatsRecord);
 }
