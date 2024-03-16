@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.SHORT_LINK_STATS_STREAM_GROUP_KEY;
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.SHORT_LINK_STATS_STREAM_TOPIC_KEY;
+
 @Configuration
 @RequiredArgsConstructor
 public class RedisStreamConfiguration {
@@ -30,6 +31,7 @@ public class RedisStreamConfiguration {
     @Bean
     public ExecutorService asyncStreamConsumer() {
         AtomicInteger index = new AtomicInteger();
+        // 获取当前计算机的CPU核数
         int processors = Runtime.getRuntime().availableProcessors();
         return new ThreadPoolExecutor(processors,
                 processors + processors >> 1,
