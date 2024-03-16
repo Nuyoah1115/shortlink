@@ -16,6 +16,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.DELAY_QUEUE_STATS_KEY;
+
+/**
+ * 延时队列消费者
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

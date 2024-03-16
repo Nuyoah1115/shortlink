@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.DELAY_QUEUE_STATS_KEY;
+
+/**
+ * 延时队列生产者
+ */
 @Component
 @RequiredArgsConstructor
 public class DelayShortLinkStatsProducer {
