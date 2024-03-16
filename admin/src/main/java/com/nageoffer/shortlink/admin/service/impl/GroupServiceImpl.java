@@ -1,11 +1,13 @@
 package com.nageoffer.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nageoffer.shortlink.admin.common.biz.user.UserContext;
+import com.nageoffer.shortlink.admin.common.convention.exception.ClientException;
 import com.nageoffer.shortlink.admin.common.convention.result.Result;
 import com.nageoffer.shortlink.admin.dao.entity.GroupDO;
 import com.nageoffer.shortlink.admin.dao.mapper.GroupMapper;
@@ -18,11 +20,16 @@ import com.nageoffer.shortlink.admin.service.GroupService;
 import com.nageoffer.shortlink.admin.util.RandomStringGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.nageoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_GROUP_CACHE_KEY;
 
 /**
  * @Author: Nuyoah
@@ -33,6 +40,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
+
+    private final RedissonClient redissonClient;
+
+    @Value("${short-link.group.max-limit}")
+    private Integer groupMaxLimit;
+
     ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
     };
 
@@ -43,17 +56,30 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public void saveGroup(String username, String groupName) {
-        String gid;
-        do {
-            gid = RandomStringGenerator.generateRandomString();
-        } while (!hasGid(username, gid));
-        GroupDO groupDO = GroupDO.builder()
-                .gid(gid)
-                .sortOrder(0)
-                .name(groupName)
-                .username(username)
-                .build();
-        baseMapper.insert(groupDO);
+        RLock lock = redissonClient.getLock(String.format(LOCK_GROUP_CACHE_KEY, username));
+        lock.lock();
+        try {
+            LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
+                    .eq(GroupDO::getUsername, username)
+                    .eq(GroupDO::getDelFlag, 0);
+            List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
+            if (CollUtil.isNotEmpty(groupDOList) && groupDOList.size() == groupMaxLimit) {
+                throw new ClientException(String.format("分组已超出最大分组限制: %d", groupMaxLimit));
+            }
+            String gid;
+            do {
+                gid = RandomStringGenerator.generateRandomString();
+            } while (!hasGid(username, gid));
+            GroupDO groupDO = GroupDO.builder()
+                    .gid(gid)
+                    .sortOrder(0)
+                    .name(groupName)
+                    .username(username)
+                    .build();
+            baseMapper.insert(groupDO);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
