@@ -100,6 +100,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
     @Override
     public ShortLinkSaveRespDTO createShortLink(ShortLinkSaveReqDTO saveReqDTO) {
+        verificationWhitelist(saveReqDTO.getOriginUrl());
         String shortLinkSuffix = generateSuffix(saveReqDTO);
         String fullShortUrl = StrBuilder.create(defaultDomain)
                 .append("/")
