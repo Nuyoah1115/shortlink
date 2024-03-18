@@ -1,6 +1,8 @@
 server:
   port: 8001
 spring:
+  application:
+    name: short-link-project
   datasource:
     # ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
@@ -15,15 +17,14 @@ spring:
     view:
       prefix: /templates/
       suffix: .html
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 mybatis-plus:
   configuration:
     shrink-whitespaces-in-sql: true #从SQL中删除多余的空格字符
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  global-config:
-    db-config:
-      logic-delete-field: delFlag
-      logic-delete-value: 1
-      logic-not-delete-value: 0
   mapper-locations: classpath:mapper/*.xml
 short-link:
   domain:
@@ -33,7 +34,7 @@ short-link:
       amap-key: 0e036d9efb2606dc89f858e31ea7593d
   goto-domain:
     white-list:
-      enable: true
+      enable: false
       names: '拿个offer'
       details:
         - nageoffer.com

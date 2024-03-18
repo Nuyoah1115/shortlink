@@ -14,7 +14,7 @@ import com.nageoffer.shortlink.admin.dao.mapper.GroupMapper;
 import com.nageoffer.shortlink.admin.dto.req.GroupReqOrderDTO;
 import com.nageoffer.shortlink.admin.dto.req.GroupReqUpdateDTO;
 import com.nageoffer.shortlink.admin.dto.resp.GroupRespDTO;
-import com.nageoffer.shortlink.admin.remote.ShortLinkRemoteService;
+import com.nageoffer.shortlink.admin.remote.ShortLinkActualRemoteService;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.nageoffer.shortlink.admin.service.GroupService;
 import com.nageoffer.shortlink.admin.util.RandomStringGenerator;
@@ -41,13 +41,11 @@ import static com.nageoffer.shortlink.admin.common.constant.RedisCacheConstant.L
 @Slf4j
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
 
+    private final ShortLinkActualRemoteService shortLinkActualRemoteService;
     private final RedissonClient redissonClient;
 
     @Value("${short-link.group.max-limit}")
     private Integer groupMaxLimit;
-
-    ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
-    };
 
     @Override
     public void saveGroup(String groupName) {
@@ -89,7 +87,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                 .eq(GroupDO::getUsername, UserContext.getUsername())
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
-        Result<List<ShortLinkGroupCountQueryRespDTO>> listResult = shortLinkRemoteService
+        Result<List<ShortLinkGroupCountQueryRespDTO>> listResult = shortLinkActualRemoteService
                 .listGroupShortLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
         List<GroupRespDTO> groupRespDTOS = BeanUtil.copyToList(groupDOList, GroupRespDTO.class);
         groupRespDTOS.forEach(each -> {
