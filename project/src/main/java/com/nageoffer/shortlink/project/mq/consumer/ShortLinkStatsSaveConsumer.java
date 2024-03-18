@@ -115,8 +115,8 @@ public class ShortLinkStatsSaveConsumer implements StreamListener<String, MapRec
                     .build();
             linkAccessStatsMapper.shortLinkStats(linkAccessStatsDO);
             Map<String, Object> localeParamMap = new HashMap<>();
-            localeParamMap.put("key", statsLocaleAmapKey);
             localeParamMap.put("ip", statsRecord.getRemoteAddr());
+            localeParamMap.put("key", statsLocaleAmapKey);
             String localeResultStr = HttpUtil.get(AMAP_REMOTE_URL, localeParamMap);
             JSONObject localeResultObj = JSON.parseObject(localeResultStr);
             String infoCode = localeResultObj.getString("infocode");

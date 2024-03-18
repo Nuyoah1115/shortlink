@@ -24,13 +24,12 @@ import org.redisson.api.RedissonClient;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.nageoffer.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
+import static com.nageoffer.shortlink.admin.common.constant.RedisCacheConstant.USER_LOGIN_KEY;
 import static com.nageoffer.shortlink.admin.common.convention.errorcode.BaseErrorCode.USER_NAME_PASSWORD_VERIFY_ERROR;
 import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.*;
 
@@ -109,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
         if (userDo == null) {
             throw new ClientException(USER_NAME_PASSWORD_VERIFY_ERROR);
         }
-        Map<Object, Object> hasLoginMap = stringRedisTemplate.opsForHash().entries("login_" + loginReqDTO.getUsername());
+        Map<Object, Object> hasLoginMap = stringRedisTemplate.opsForHash().entries(USER_LOGIN_KEY + loginReqDTO.getUsername());
         if (CollUtil.isNotEmpty(hasLoginMap)) {
             String token = hasLoginMap.keySet()
                     .stream()
@@ -121,20 +120,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
         String token = UUID.randomUUID().toString();
         //stringRedisTemplate.opsForValue().set(uuid, JSON.toJSONString(userDo), 30, TimeUnit.MINUTES);
         //使用哈希结构防止多次登录产生不同的token
-        stringRedisTemplate.opsForHash().put("login_" + loginReqDTO.getUsername(), token, JSON.toJSONString(userDo));
-        stringRedisTemplate.expire("login_" + loginReqDTO.getUsername(), 30L, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForHash().put(USER_LOGIN_KEY + loginReqDTO.getUsername(), token, JSON.toJSONString(userDo));
+        stringRedisTemplate.expire(USER_LOGIN_KEY + loginReqDTO.getUsername(), 30L, TimeUnit.MINUTES);
         return new UserLoginRespDTO(token);
     }
 
     @Override
     public Boolean checkLogin(String username, String token) {
-        return stringRedisTemplate.opsForHash().get("login_" + username, token) != null;
+        return stringRedisTemplate.opsForHash().get(USER_LOGIN_KEY + username, token) != null;
     }
 
     @Override
     public void logout(String username, String token) {
         if (checkLogin(username, token)) {
-            stringRedisTemplate.delete("login_" + username);
+            stringRedisTemplate.delete(USER_LOGIN_KEY + username);
             return;
         }
         throw new ClientException("用户token不存在或用户未登录");
