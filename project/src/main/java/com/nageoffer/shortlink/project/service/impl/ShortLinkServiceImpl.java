@@ -2,14 +2,11 @@ package com.nageoffer.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -64,12 +61,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.*;
-import static com.nageoffer.shortlink.project.common.constant.ShortLinkConstant.AMAP_REMOTE_URL;
-import static com.nageoffer.shortlink.project.util.LinkUtil.*;
-
 /**
  * @Author: Nuyoah
- * @Date: idate
+ * @Date: 2024/3/18
  * @Description: 短链接接口实现层
  **/
 @Service
@@ -92,13 +86,11 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final LinkStatsTodayService linkStatsTodayService;
     private final ShortLinkStatsSaveProducer shortLinkStatsSaveProducer;
 
-    @Value("${short-link.stats.locale.amap-key}")
-    private String statsLocaleAmapKey;
-
     @Value("${short-link.domain.default}")
     private String defaultDomain;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ShortLinkSaveRespDTO createShortLink(ShortLinkSaveReqDTO saveReqDTO) {
         verificationWhitelist(saveReqDTO.getOriginUrl());
         String shortLinkSuffix = generateSuffix(saveReqDTO);
@@ -131,13 +123,8 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             baseMapper.insert(shortLinkDO);
             shortLinkGotoMapper.insert(shortLinkGotoDO);
         } catch (DuplicateKeyException ex) {
-            LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
-                    .eq(ShortLinkDO::getFullShortUrl, fullShortUrl);
-            ShortLinkDO hasShortLink = baseMapper.selectOne(queryWrapper);
-            if (hasShortLink != null) {
-                log.warn("短链接：{} 重复入库", fullShortUrl);
-                throw new ServiceException("短链接生成重复");
-            }
+            log.warn("短链接：{} 重复入库", fullShortUrl);
+            throw new ServiceException(String.format("短链接：%s 生成重复",fullShortUrl));
         }
         stringRedisTemplate.opsForValue().set(
                 String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
@@ -490,7 +477,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 throw new ServiceException("短链接频繁生成，请稍后再试");
             }
             String originUrl = saveReqDTO.getOriginUrl();
-            originUrl += System.currentTimeMillis();
+            originUrl += System.currentTimeMillis() + UUID.randomUUID().toString();
             shortUri = HashUtil.hashToBase62(originUrl);
             if (!shortUriCreateCachePenetrationBloomFilter.contains(defaultDomain + "/" + shortUri)) {
                 break;
