@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Description 网关启动类
  */
 @SpringBootApplication
-public class GatewayApplication {
+public class GatewayServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GatewayApplication.class,args);
+        SpringApplication.run(GatewayServiceApplication.class,args);
     }
 }

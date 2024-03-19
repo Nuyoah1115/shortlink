@@ -10,7 +10,13 @@
         <module name="shortlink-admin" />
         <module name="shortlink-gateway" />
         <module name="shortlink-project" />
+        <module name="shortlink-aggregation" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="shortlink-aggregation" options="" />
+    </option>
   </component>
 </project>
