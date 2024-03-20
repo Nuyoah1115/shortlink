@@ -27,7 +27,7 @@ import java.util.List;
  **/
 @RestController
 @RequiredArgsConstructor
-public class ShortLinkController {
+public class ShortLinkAdminController {
 
     private final ShortLinkActualRemoteService shortLinkActualRemoteService;
 

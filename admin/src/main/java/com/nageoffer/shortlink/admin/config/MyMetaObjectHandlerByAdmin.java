@@ -2,9 +2,10 @@ package com.nageoffer.shortlink.admin.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -13,7 +14,9 @@ import java.util.Date;
  * @Description:
  **/
 @Component
-public class MyMetaObjectHandler implements MetaObjectHandler {
+@Primary
+@ConditionalOnBean(MetaObjectHandler.class)
+public class MyMetaObjectHandlerByAdmin implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, "createTime", Date::new, Date.class);

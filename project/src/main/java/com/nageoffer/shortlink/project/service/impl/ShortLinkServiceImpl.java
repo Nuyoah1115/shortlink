@@ -113,7 +113,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .totalUip(0)
                 .delTime(0L)
                 .fullShortUrl(fullShortUrl)
-                .favicon(getFaviconUrl(saveReqDTO.getOriginUrl()))
+                .favicon(getFavicon(saveReqDTO.getOriginUrl()))
                 .build();
         ShortLinkGotoDO shortLinkGotoDO = ShortLinkGotoDO.builder()
                 .fullShortUrl(fullShortUrl)
@@ -223,7 +223,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .totalUv(hasShortLinkDO.getTotalUv())
                         .totalUip(hasShortLinkDO.getTotalUip())
                         .fullShortUrl(hasShortLinkDO.getFullShortUrl())
-                        .favicon(getFaviconUrl(requestParam.getOriginUrl()))
+                        .favicon(getFavicon(requestParam.getOriginUrl()))
                         .delTime(0L)
                         .build();
                 baseMapper.insert(shortLinkDO);
@@ -488,17 +488,17 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     }
 
     @SneakyThrows
-    private String getFaviconUrl(String url) {
-        URL tagetUrl = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) tagetUrl.openConnection();
+    private String getFavicon(String url) {
+        URL targetUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
         connection.setRequestMethod("GET");
         connection.connect();
         int responseCode = connection.getResponseCode();
         if (HttpURLConnection.HTTP_OK == responseCode) {
             Document document = Jsoup.connect(url).get();
-            Element faviconUrl = document.select("link[rel~=(?i)^(shortcut )?icon]").first();
-            if (faviconUrl != null) {
-                return faviconUrl.attr("abs:href");
+            Element faviconLink = document.select("link[rel~=(?i)^(shortcut )?icon]").first();
+            if (faviconLink != null) {
+                return faviconLink.attr("abs:href");
             }
         }
         return null;

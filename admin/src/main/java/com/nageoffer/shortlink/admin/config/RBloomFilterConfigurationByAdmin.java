@@ -4,15 +4,13 @@ import org.springframework.context.annotation.Configuration;
 
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * 布隆过滤器配置
  */
 @Configuration
-public class RBloomFilterConfiguration {
+public class RBloomFilterConfigurationByAdmin {
 
     /**
      * 防止用户注册查询数据库的布隆过滤器

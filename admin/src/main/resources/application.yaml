@@ -27,5 +27,3 @@ short-link:
     enable: true
     time-window: 1
     max-access-count: 20
-aggregation:
-  remote-url: http://127.0.0.1:${server.port}

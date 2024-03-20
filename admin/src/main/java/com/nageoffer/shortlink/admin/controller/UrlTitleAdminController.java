@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-public class UrlTitleController {
+public class UrlTitleAdminController {
 
     private final ShortLinkActualRemoteService shortLinkActualRemoteService;
 

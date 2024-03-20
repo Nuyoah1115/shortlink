@@ -14,7 +14,7 @@ import org.springframework.cloud.openfeign.FeignClient;
  **/
 @SpringBootApplication
 @EnableDiscoveryClient
-@FeignClient(value = "short-link-project", url = "${aggregation.remote-url:}")
+@EnableFeignClients("com.nageoffer.shortlink.admin.remote")
 @MapperScan("com.nageoffer.shortlink.admin.dao.mapper")
 public class ShortLinkAdminApplication {
     public static void main(String[] args) {
